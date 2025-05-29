@@ -1,4 +1,4 @@
-// import "dotenv/config"; uncomment this to load .env
+import "dotenv/config";
 import path from "node:path";
 import type { PrismaConfig } from "prisma";
 

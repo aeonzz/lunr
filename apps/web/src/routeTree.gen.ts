@@ -14,7 +14,10 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AiImport } from './routes/ai'
+import { Route as AppRouteImport } from './routes/app/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as AppIssuesImport } from './routes/app/issues'
+import { Route as AppInboxImport } from './routes/app/inbox'
 
 // Create/Update Routes
 
@@ -36,10 +39,28 @@ const AiRoute = AiImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AppRouteRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AppIssuesRoute = AppIssuesImport.update({
+  id: '/issues',
+  path: '/issues',
+  getParentRoute: () => AppRouteRoute,
+} as any)
+
+const AppInboxRoute = AppInboxImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -51,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRoute
     }
     '/ai': {
@@ -74,44 +102,104 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/app/inbox': {
+      id: '/app/inbox'
+      path: '/inbox'
+      fullPath: '/app/inbox'
+      preLoaderRoute: typeof AppInboxImport
+      parentRoute: typeof AppRouteImport
+    }
+    '/app/issues': {
+      id: '/app/issues'
+      path: '/issues'
+      fullPath: '/app/issues'
+      preLoaderRoute: typeof AppIssuesImport
+      parentRoute: typeof AppRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface AppRouteRouteChildren {
+  AppInboxRoute: typeof AppInboxRoute
+  AppIssuesRoute: typeof AppIssuesRoute
+}
+
+const AppRouteRouteChildren: AppRouteRouteChildren = {
+  AppInboxRoute: AppInboxRoute,
+  AppIssuesRoute: AppIssuesRoute,
+}
+
+const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
+  AppRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/issues': typeof AppIssuesRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/issues': typeof AppIssuesRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/app': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/app/inbox': typeof AppInboxRoute
+  '/app/issues': typeof AppIssuesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ai' | '/dashboard' | '/login'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/ai'
+    | '/dashboard'
+    | '/login'
+    | '/app/inbox'
+    | '/app/issues'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ai' | '/dashboard' | '/login'
-  id: '__root__' | '/' | '/ai' | '/dashboard' | '/login'
+  to:
+    | '/'
+    | '/app'
+    | '/ai'
+    | '/dashboard'
+    | '/login'
+    | '/app/inbox'
+    | '/app/issues'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/ai'
+    | '/dashboard'
+    | '/login'
+    | '/app/inbox'
+    | '/app/issues'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRouteRoute: typeof AppRouteRouteWithChildren
   AiRoute: typeof AiRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
@@ -119,6 +207,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRouteRoute: AppRouteRouteWithChildren,
   AiRoute: AiRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
@@ -135,6 +224,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/app",
         "/ai",
         "/dashboard",
         "/login"
@@ -142,6 +232,13 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/app": {
+      "filePath": "app/route.tsx",
+      "children": [
+        "/app/inbox",
+        "/app/issues"
+      ]
     },
     "/ai": {
       "filePath": "ai.tsx"
@@ -151,6 +248,14 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/app/inbox": {
+      "filePath": "app/inbox.tsx",
+      "parent": "/app"
+    },
+    "/app/issues": {
+      "filePath": "app/issues.tsx",
+      "parent": "/app"
     }
   }
 }
