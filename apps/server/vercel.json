@@ -6,7 +6,7 @@
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && pnpm install",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api" }
+    { "source": "/(.*)", "destination": "/api/index.js" }
   ],
   "functions": {
     "api/index.js": {

@@ -14,9 +14,12 @@
     "types": ["node"],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "composite": true
+    "composite": true,
+    "esModuleInterop": true
   },
   "tsc-alias": {
     "resolveFullPaths": true
-  }
+  },
+  "include": ["src/**/*", "api/**/*"],
+  "exclude": ["node_modules"]
 }

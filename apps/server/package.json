@@ -3,7 +3,7 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc && tsc-alias && cp -r dist/src/* dist/ && cp -r api dist/",
+    "build": "tsc && tsc-alias && mkdir -p dist/api && cp dist/src/index.js dist/api/index.js",
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "tsx watch src/index.ts",
