@@ -1,9 +1,9 @@
-import { Hono } from "hono";
-import { handle } from "hono/vercel";
+import "dotenv/config";
 import { trpcServer } from "@hono/trpc-server";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 import { auth } from "./lib/auth";
+import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { streamText } from "ai";
@@ -16,11 +16,7 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:3001",
-      "https://lunr-eight.vercel.app",
-    ],
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -29,15 +25,13 @@ app.use(
 
 app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
 
-app.use(
-  "/trpc/*",
-  trpcServer({
-    router: appRouter,
-    createContext: (_opts, context) => {
-      return createContext({ context });
-    },
-  })
-);
+
+app.use("/trpc/*", trpcServer({
+  router: appRouter,
+  createContext: (_opts, context) => {
+    return createContext({ context });
+  },
+}));
 
 app.post("/ai", async (c) => {
   const body = await c.req.json();
@@ -55,15 +49,14 @@ app.post("/ai", async (c) => {
 });
 
 app.get("/", (c) => {
-  console.log("Root route accessed");
-  return c.text("OK", 200);
+  return c.text("OK");
 });
 
-app.get("/api", (c) => {
-  console.log("API root route accessed");
-  return c.text("OK", 200);
-});
+import { serve } from "@hono/node-server";
 
-export const GET = handle(app);
-export const POST = handle(app);
-export const OPTIONS = handle(app);
+serve({
+  fetch: app.fetch,
+  port: 3000,
+}, (info) => {
+  console.log(`Server is running on http://localhost:${info.port}`);
+});
