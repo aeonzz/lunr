@@ -1,5 +1,8 @@
 {
   "github": {
     "enabled": false
-  }
+  },
+  "buildCommand": "cd ../.. && pnpm turbo run build --scope=server --include-dependencies",
+  "outputDirectory": "apps/server/dist",
+  "installCommand": "pnpm install"
 }
