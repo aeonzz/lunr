@@ -16,7 +16,11 @@ app.use(logger());
 app.use(
   "/*",
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://lunr-eight.vercel.app",
+    ],
     allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -51,8 +55,15 @@ app.post("/ai", async (c) => {
 });
 
 app.get("/", (c) => {
-  return c.text("OK");
+  console.log("Root route accessed");
+  return c.text("OK", 200);
+});
+
+app.get("/api", (c) => {
+  console.log("API root route accessed");
+  return c.text("OK", 200);
 });
 
 export const GET = handle(app);
 export const POST = handle(app);
+export const OPTIONS = handle(app);

@@ -9,6 +9,6 @@
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/trpc/:path*", "destination": "/api/trpc/:path*" },
     { "source": "/ai", "destination": "/api/ai" },
-    { "source": "/", "destination": "/api" }
+    { "source": "/", "destination": "/api/" }
   ]
 }
