@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { ChevronDown, SquarePen } from "lucide-react";
 
@@ -6,6 +7,7 @@ import {
   sidebarTeamItems,
   sidebarWorkspaceItems,
 } from "@/config/nav";
+import { authClient } from "@/lib/auth-client";
 import {
   Sidebar,
   SidebarContent,
@@ -26,9 +28,39 @@ import {
 import UserMenu from "./user-menu";
 
 export function AppSidebar() {
+  const { data: session } = authClient.useSession();
   const pathname = useLocation({
     select: (location) => location.pathname,
   });
+
+  const [sidebarState, setSidebarState] = React.useState(() => {
+    try {
+      const saved = localStorage.getItem("userSettings");
+      return saved
+        ? JSON.parse(saved)
+        : { workspaceOpen: true, teamsOpen: true };
+    } catch {
+      return { workspaceOpen: true, teamsOpen: true };
+    }
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem("userSettings", JSON.stringify(sidebarState));
+  }, [sidebarState]);
+
+  const { workspaceOpen, teamsOpen } = sidebarState;
+  const setWorkspaceOpen = React.useCallback((open: boolean) => {
+    setSidebarState((prev: { workspaceOpen: boolean; teamsOpen: boolean }) => ({
+      ...prev,
+      workspaceOpen: open,
+    }));
+  }, []);
+  const setTeamsOpen = React.useCallback((open: boolean) => {
+    setSidebarState((prev: { workspaceOpen: boolean; teamsOpen: boolean }) => ({
+      ...prev,
+      teamsOpen: open,
+    }));
+  }, []);
 
   return (
     <Sidebar variant="inset">
@@ -42,24 +74,29 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {sidebarMenuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={item.url === pathname}
-                    size="sm"
-                  >
-                    <Link to={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {sidebarMenuItems.map((item) => {
+                const userName = session?.user.name ?? "me";
+                const itemUrl = item.url.replace("$userName", userName);
+                const decodedPathname = decodeURIComponent(pathname);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={decodedPathname === itemUrl}
+                      size="sm"
+                    >
+                      <Link to={item.url} params={{ userName }}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <Collapsible defaultOpen>
+        <Collapsible open={workspaceOpen} onOpenChange={setWorkspaceOpen}>
           <SidebarGroup>
             <CollapsibleTrigger
               render={
@@ -95,7 +132,7 @@ export function AppSidebar() {
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
-        <Collapsible defaultOpen>
+        <Collapsible open={teamsOpen} onOpenChange={setTeamsOpen}>
           <SidebarGroup>
             <CollapsibleTrigger
               render={

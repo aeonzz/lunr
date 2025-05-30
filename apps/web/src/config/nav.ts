@@ -1,14 +1,30 @@
-import { Inbox, ListTodo, FolderKanban, LayoutGrid, MoreHorizontal, Users } from "lucide-react";
+import {
+  FolderKanban,
+  Inbox,
+  LayoutGrid,
+  ListTodo,
+  MoreHorizontal,
+  Users,
+} from "lucide-react";
+import type { FileRoutesByTo } from "../routeTree.gen";
 
-export const sidebarMenuItems = [
+type RoutePath = keyof FileRoutesByTo;
+
+interface NavItem {
+  title: string;
+  url: RoutePath;
+  icon: React.ComponentType;
+}
+
+export const sidebarMenuItems: NavItem[] = [
   {
     title: "Inbox",
-    url: "/",
+    url: "/$userName/inbox",
     icon: Inbox,
   },
   {
     title: "My Issues",
-    url: "/ai",
+    url: "/$userName/issues",
     icon: ListTodo,
   },
 ];
@@ -47,7 +63,7 @@ export const sidebarWorkspaceItems = [
     url: "/#",
     icon: MoreHorizontal,
   },
-]
+];
 
 export const userMenuMenuItems = [
   {
@@ -65,4 +81,4 @@ export const userMenuMenuItems = [
     url: "/#",
     shortcut: "⌘⇧L",
   },
-]
+];

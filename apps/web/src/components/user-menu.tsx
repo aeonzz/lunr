@@ -29,19 +29,7 @@ import { Skeleton } from "./ui/skeleton";
 export default function UserMenu() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(false);
-  // const { data: session, isPending } = authClient.useSession();
-
-  // if (isPending) {
-  //   return <Skeleton className="h-9 w-24" />;
-  // }
-
-  // if (!session) {
-  //   return (
-  //     <Button variant="outline" asChild>
-  //       <Link to="/login">Sign In</Link>
-  //     </Button>
-  //   );
-  // }
+  const { data: session, isPending } = authClient.useSession();
 
   return (
     <SidebarMenu>
@@ -50,15 +38,33 @@ export default function UserMenu() {
           <DropdownMenuTrigger
             render={
               <SidebarMenuButton className="[&>svg]:text-sidebar-muted w-fit font-medium [&>svg]:size-4">
-                <Avatar className="size-6 rounded-md">
-                  <AvatarImage
-                    src="https://github.com/aeonzz.png"
-                    alt="@aeonz"
-                  />
-                  <AvatarFallback>AE</AvatarFallback>
-                </Avatar>
-                Aeonz
-                <ChevronDown className="ml-auto font-semibold" />
+                {isPending ? (
+                  <div className="[&>svg]:text-sidebar-muted flex items-center gap-2 [&>svg]:size-4">
+                    <Skeleton className="size-6 rounded-md" />
+                    <Skeleton className="h-4 w-20" />
+                    <ChevronDown className="ml-auto font-semibold" />
+                  </div>
+                ) : (
+                  <>
+                    <Avatar className="size-6 rounded-md">
+                      {session?.user?.image ? (
+                        <AvatarImage
+                          src={session.user.image}
+                          alt={session.user.name ?? ""}
+                        />
+                      ) : (
+                        <AvatarFallback className="rounded-md text-xs">
+                          {session?.user?.name?.slice(0, 2).toUpperCase() ??
+                            "??"}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <span className="text-xs-plus max-w-[90px] truncate leading-none font-semibold">
+                      {session?.user.name}
+                    </span>
+                    <ChevronDown className="ml-auto font-semibold" />
+                  </>
+                )}
               </SidebarMenuButton>
             }
           />
