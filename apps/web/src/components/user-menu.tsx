@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   ChevronDown,
@@ -27,6 +28,7 @@ import { Skeleton } from "./ui/skeleton";
 
 export default function UserMenu() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(false);
   // const { data: session, isPending } = authClient.useSession();
 
   // if (isPending) {
@@ -94,9 +96,14 @@ export default function UserMenu() {
             </DropdownMenu>
             <DropdownMenuSeparator />
             <DropdownMenuItem
+              disabled={isLoading}
+              closeOnClick={false}
               onClick={async () =>
                 authClient.signOut({
                   fetchOptions: {
+                    onRequest: () => {
+                      setIsLoading(true);
+                    },
                     onSuccess: () => {
                       navigate({
                         to: "/login",

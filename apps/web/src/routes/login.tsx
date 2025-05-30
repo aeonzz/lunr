@@ -33,13 +33,7 @@ function RouteComponent() {
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
-      fetchOptions: {
-        onSuccess: () => {
-          navigate({
-            to: "/dashboard",
-          });
-        },
-      },
+      callbackURL: `${import.meta.env.VITE_APP_URL}/app`,
     });
   };
 
