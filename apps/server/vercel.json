@@ -6,10 +6,10 @@
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && pnpm install",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.js" }
+    { "source": "/(.*)", "destination": "/index.js" }
   ],
   "functions": {
-    "api/index.js": {
+    "index.js": {
       "memory": 1024,
       "maxDuration": 10
     }
