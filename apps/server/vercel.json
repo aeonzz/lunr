@@ -1,6 +1,8 @@
 {
+  "github": {
+    "enabled": false
+  },
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=server",
   "outputDirectory": "dist",
-  "installCommand": "cd ../.. && pnpm install",
-  "framework": "node"
-} 
+  "installCommand": "cd ../.. && pnpm install"
+}
