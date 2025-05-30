@@ -5,8 +5,11 @@
   "buildCommand": "cd ../.. && pnpm turbo run build --filter=server",
   "outputDirectory": "dist",
   "installCommand": "cd ../.. && pnpm install",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
+  ],
   "functions": {
-    "api/**/*.ts": {
+    "api/index.js": {
       "memory": 1024,
       "maxDuration": 10
     }
