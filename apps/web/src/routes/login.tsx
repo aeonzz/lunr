@@ -1,67 +1,39 @@
-import * as React from "react";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Circle } from "lucide-react";
+import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import type { AuthOptions } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: async () => {
+    const session = await authClient.getSession();
+
+    if (session.data) {
+      throw redirect({
+        to: "/$workspace/inbox",
+        params: {
+          workspace: session.data.user.id,
+        },
+      });
+    }
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [signingIn, setSigningIn] = React.useState(false);
-  const { data: session, isPending } = authClient.useSession();
-  const navigate = Route.useNavigate();
-
-  React.useEffect(() => {
-    if (session && !isPending) {
-      navigate({
-        to: "/$userName/inbox",
-        params: {
-          userName: session.user.name,
-        },
+  const handleSignIn = async (provider: AuthOptions) => {
+    try {
+      await authClient.signIn.social({
+        provider: provider,
+        callbackURL: `${import.meta.env.VITE_APP_URL}/login`,
       });
+    } catch (error) {
+      console.error("Sign in error:", error);
+      toast.error("Failed to sign in. Please try again.");
     }
-  }, [session, isPending, navigate]);
-
-  const handleGoogleSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "google",
-      callbackURL: `${import.meta.env.VITE_APP_URL}/inbox/${session?.user.name}/inbox`,
-      fetchOptions: {
-        onRequest: () => {
-          setSigningIn(true);
-        },
-        onError: () => {
-          setSigningIn(false);
-        },
-      },
-    });
   };
-
-  const handleGithubSignIn = async () => {
-    await authClient.signIn.social({
-      provider: "github",
-      callbackURL: `${import.meta.env.VITE_APP_URL}/inbox/${session?.user.name}/inbox`,
-      fetchOptions: {
-        onRequest: () => {
-          setSigningIn(true);
-        },
-        onError: () => {
-          setSigningIn(false);
-        },
-      },
-    });
-  };
-
-  if (isPending && !signingIn) {
-    return (
-      <div className="bg-base-1000 flex min-h-screen items-center justify-center">
-        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent" />
-      </div>
-    );
-  }
 
   return (
     <div className="bg-base-1000 flex min-h-screen items-center justify-center">
@@ -78,7 +50,9 @@ function RouteComponent() {
           <Button
             className="border-primary-500 mt-6 w-full border"
             size="xl"
-            onClick={handleGoogleSignIn}
+            onClick={() => {
+              handleSignIn("google");
+            }}
           >
             <svg className="mr-1 size-3.5" viewBox="0 0 24 24">
               <path
@@ -104,7 +78,9 @@ function RouteComponent() {
             variant="secondary"
             className="border-base-800 mt-4 w-full border"
             size="xl"
-            onClick={handleGithubSignIn}
+            onClick={() => {
+              handleSignIn("github");
+            }}
           >
             <svg
               className="mr-1 size-3.5"

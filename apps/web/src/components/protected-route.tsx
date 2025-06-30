@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import * as React from "react";
 import { Route, useNavigate } from "@tanstack/react-router";
 
 import { authClient } from "../lib/auth-client";
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { data: session, isPending } = authClient.useSession();
   const navigate = useNavigate();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!session && !isPending) {
       navigate({
         to: "/login",
@@ -22,10 +22,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (isPending) {
     return <Loader />;
-  }
-
-  if (!session) {
-    return null;
   }
 
   return <>{children}</>;

@@ -1,61 +1,84 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import * as React from "react";
+import { Tooltip as TooltipPrimitive } from "@base-ui-components/react/tooltip";
+import { ChevronDown } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function TooltipProvider({
-  delayDuration = 0,
+  delay = 0,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
   return (
     <TooltipPrimitive.Provider
       data-slot="tooltip-provider"
-      delayDuration={delayDuration}
+      delay={delay}
       {...props}
     />
-  )
+  );
 }
 
 function Tooltip({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Root>) {
-  return (
-    <TooltipProvider>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  )
+  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />;
 }
 
 function TooltipTrigger({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />;
 }
+
+function TooltipPortal({
+  ...props
+}: React.ComponentProps<typeof TooltipPrimitive.Portal>) {
+  return <TooltipPrimitive.Portal data-slot="tooltip-portal" {...props} />;
+}
+
+interface TooltipContentProps
+  extends Omit<
+    React.ComponentProps<typeof TooltipPrimitive.Positioner>,
+    "render"
+  > {}
 
 function TooltipContent({
   className,
-  sideOffset = 0,
+  sideOffset = 10,
   children,
   ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
+}: TooltipContentProps) {
   return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
+    <TooltipPortal>
+      <TooltipPrimitive.Positioner
+        data-slot="tooltip-positioner"
         sideOffset={sideOffset}
-        className={cn(
-          "bg-primary text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--radix-tooltip-content-transform-origin) rounded-md px-3 py-1.5 text-xs text-balance",
-          className
-        )}
+        className="z-50 size-auto"
         {...props}
       >
-        {children}
-        <TooltipPrimitive.Arrow className="bg-primary fill-primary z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]" />
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
-  )
+        <TooltipPrimitive.Popup
+          data-slot="tooltip-popup"
+          className={cn(
+            "bg-primary text-primary-foreground w-fit rounded-md px-3 py-1.5 text-xs text-balance transition-[transform,scale,opacity] duration-150 ease-out",
+            "origin-[var(--transform-origin)] data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+            className
+          )}
+        >
+          {children}
+          <TooltipPrimitive.Arrow className="data-[side=bottom]:top-[-10px] data-[side=bottom]:rotate-180 data-[side=left]:right-[-10px] data-[side=left]:-rotate-90 data-[side=right]:left-[-10px] data-[side=right]:rotate-90 data-[side=top]:bottom-[-10px]">
+            <ChevronDown className="fill-primary stroke-primary size-4 shrink-0" />
+          </TooltipPrimitive.Arrow>
+        </TooltipPrimitive.Popup>
+      </TooltipPrimitive.Positioner>
+    </TooltipPortal>
+  );
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+export {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipPortal,
+  TooltipContent,
+};

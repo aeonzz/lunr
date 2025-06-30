@@ -15,9 +15,9 @@ import { Route as LoginImport } from './routes/login'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AiImport } from './routes/ai'
 import { Route as AppRouteImport } from './routes/_app/route'
-import { Route as AppIndexImport } from './routes/_app/index'
-import { Route as AppUserNameIssuesImport } from './routes/_app/$userName/issues'
-import { Route as AppUserNameInboxImport } from './routes/_app/$userName/inbox'
+import { Route as IndexImport } from './routes/index'
+import { Route as AppWorkspaceIssuesImport } from './routes/_app/$workspace/issues'
+import { Route as AppWorkspaceInboxImport } from './routes/_app/$workspace/inbox'
 
 // Create/Update Routes
 
@@ -44,21 +44,21 @@ const AppRouteRoute = AppRouteImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AppIndexRoute = AppIndexImport.update({
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppWorkspaceIssuesRoute = AppWorkspaceIssuesImport.update({
+  id: '/$workspace/issues',
+  path: '/$workspace/issues',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppUserNameIssuesRoute = AppUserNameIssuesImport.update({
-  id: '/$userName/issues',
-  path: '/$userName/issues',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppUserNameInboxRoute = AppUserNameInboxImport.update({
-  id: '/$userName/inbox',
-  path: '/$userName/inbox',
+const AppWorkspaceInboxRoute = AppWorkspaceInboxImport.update({
+  id: '/$workspace/inbox',
+  path: '/$workspace/inbox',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
@@ -66,6 +66,13 @@ const AppUserNameInboxRoute = AppUserNameInboxImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_app': {
       id: '/_app'
       path: ''
@@ -94,25 +101,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/_app/': {
-      id: '/_app/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof AppIndexImport
+    '/_app/$workspace/inbox': {
+      id: '/_app/$workspace/inbox'
+      path: '/$workspace/inbox'
+      fullPath: '/$workspace/inbox'
+      preLoaderRoute: typeof AppWorkspaceInboxImport
       parentRoute: typeof AppRouteImport
     }
-    '/_app/$userName/inbox': {
-      id: '/_app/$userName/inbox'
-      path: '/$userName/inbox'
-      fullPath: '/$userName/inbox'
-      preLoaderRoute: typeof AppUserNameInboxImport
-      parentRoute: typeof AppRouteImport
-    }
-    '/_app/$userName/issues': {
-      id: '/_app/$userName/issues'
-      path: '/$userName/issues'
-      fullPath: '/$userName/issues'
-      preLoaderRoute: typeof AppUserNameIssuesImport
+    '/_app/$workspace/issues': {
+      id: '/_app/$workspace/issues'
+      path: '/$workspace/issues'
+      fullPath: '/$workspace/issues'
+      preLoaderRoute: typeof AppWorkspaceIssuesImport
       parentRoute: typeof AppRouteImport
     }
   }
@@ -121,15 +121,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteRouteChildren {
-  AppIndexRoute: typeof AppIndexRoute
-  AppUserNameInboxRoute: typeof AppUserNameInboxRoute
-  AppUserNameIssuesRoute: typeof AppUserNameIssuesRoute
+  AppWorkspaceInboxRoute: typeof AppWorkspaceInboxRoute
+  AppWorkspaceIssuesRoute: typeof AppWorkspaceIssuesRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppIndexRoute: AppIndexRoute,
-  AppUserNameInboxRoute: AppUserNameInboxRoute,
-  AppUserNameIssuesRoute: AppUserNameIssuesRoute,
+  AppWorkspaceInboxRoute: AppWorkspaceInboxRoute,
+  AppWorkspaceIssuesRoute: AppWorkspaceIssuesRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
@@ -137,66 +135,69 @@ const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
 )
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/': typeof AppIndexRoute
-  '/$userName/inbox': typeof AppUserNameInboxRoute
-  '/$userName/issues': typeof AppUserNameIssuesRoute
+  '/$workspace/inbox': typeof AppWorkspaceInboxRoute
+  '/$workspace/issues': typeof AppWorkspaceIssuesRoute
 }
 
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/': typeof AppIndexRoute
-  '/$userName/inbox': typeof AppUserNameInboxRoute
-  '/$userName/issues': typeof AppUserNameIssuesRoute
+  '/$workspace/inbox': typeof AppWorkspaceInboxRoute
+  '/$workspace/issues': typeof AppWorkspaceIssuesRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
+  '/': typeof IndexRoute
   '/_app': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/_app/': typeof AppIndexRoute
-  '/_app/$userName/inbox': typeof AppUserNameInboxRoute
-  '/_app/$userName/issues': typeof AppUserNameIssuesRoute
+  '/_app/$workspace/inbox': typeof AppWorkspaceInboxRoute
+  '/_app/$workspace/issues': typeof AppWorkspaceIssuesRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | ''
     | '/ai'
     | '/dashboard'
     | '/login'
-    | '/'
-    | '/$userName/inbox'
-    | '/$userName/issues'
+    | '/$workspace/inbox'
+    | '/$workspace/issues'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
+    | ''
     | '/ai'
     | '/dashboard'
     | '/login'
-    | '/'
-    | '/$userName/inbox'
-    | '/$userName/issues'
+    | '/$workspace/inbox'
+    | '/$workspace/issues'
   id:
     | '__root__'
+    | '/'
     | '/_app'
     | '/ai'
     | '/dashboard'
     | '/login'
-    | '/_app/'
-    | '/_app/$userName/inbox'
-    | '/_app/$userName/issues'
+    | '/_app/$workspace/inbox'
+    | '/_app/$workspace/issues'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AiRoute: typeof AiRoute
   DashboardRoute: typeof DashboardRoute
@@ -204,6 +205,7 @@ export interface RootRouteChildren {
 }
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AppRouteRoute: AppRouteRouteWithChildren,
   AiRoute: AiRoute,
   DashboardRoute: DashboardRoute,
@@ -220,18 +222,21 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/",
         "/_app",
         "/ai",
         "/dashboard",
         "/login"
       ]
     },
+    "/": {
+      "filePath": "index.tsx"
+    },
     "/_app": {
       "filePath": "_app/route.tsx",
       "children": [
-        "/_app/",
-        "/_app/$userName/inbox",
-        "/_app/$userName/issues"
+        "/_app/$workspace/inbox",
+        "/_app/$workspace/issues"
       ]
     },
     "/ai": {
@@ -243,16 +248,12 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
-    "/_app/": {
-      "filePath": "_app/index.tsx",
+    "/_app/$workspace/inbox": {
+      "filePath": "_app/$workspace/inbox.tsx",
       "parent": "/_app"
     },
-    "/_app/$userName/inbox": {
-      "filePath": "_app/$userName/inbox.tsx",
-      "parent": "/_app"
-    },
-    "/_app/$userName/issues": {
-      "filePath": "_app/$userName/issues.tsx",
+    "/_app/$workspace/issues": {
+      "filePath": "_app/$workspace/issues.tsx",
       "parent": "/_app"
     }
   }

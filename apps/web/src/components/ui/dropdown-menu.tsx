@@ -125,7 +125,7 @@ function DropdownMenuGroupLabel({
       data-slot="dropdown-menu-group-label"
       data-inset={inset}
       className={cn(
-        "text-sm-plus px-2 py-1.5 leading-none font-medium data-[inset]:pl-8",
+        "text-xs-plus truncate px-2 py-1 leading-none font-normal [color:var(--muted-foreground)] data-[inset]:pl-8",
         className
       )}
       {...props}

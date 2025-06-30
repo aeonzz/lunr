@@ -1,6 +1,24 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "../../prisma";
+import { customSession } from "better-auth/plugins";
+
+async function getUserInfo(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      ownedWorkspaces: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return {
+    ownedWorkspaces: user.ownedWorkspaces,
+  };
+}
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -22,4 +40,16 @@ export const auth = betterAuth({
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     },
   },
+  plugins: [
+    customSession(async ({ user, session }) => {
+      const userInfo = await getUserInfo(session.userId);
+      return {
+        user: {
+          ...user,
+          ownedWorkspaces: userInfo.ownedWorkspaces,
+        },
+        session,
+      };
+    }),
+  ],
 });

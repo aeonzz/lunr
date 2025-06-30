@@ -1,0 +1,82 @@
+model Workspace {
+  id          String   @id @default(uuid()) @map("_id")
+  name        String
+  slug        String   @unique
+  description String?
+  avatar      String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members WorkspaceMember[]
+  invites WorkspaceInvite[]
+  ownerId String
+  owner   User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  settings WorkspaceSettings?
+
+  @@map("workspace")
+}
+
+model WorkspaceMember {
+  id        String        @id @default(uuid()) @map("_id")
+  role      WorkspaceRole @default(MEMBER)
+  joinedAt  DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_member")
+}
+
+model WorkspaceSettings {
+  id                String        @id @default(uuid()) @map("_id")
+  allowInvites      Boolean       @default(true)
+  requireApproval   Boolean       @default(false)
+  maxMembers        Int           @default(100)
+  allowPublicAccess Boolean       @default(false)
+  defaultMemberRole WorkspaceRole @default(MEMBER)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  workspaceId String    @unique
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("workspace_settings")
+}
+
+model WorkspaceInvite {
+  id        String        @id @default(uuid()) @map("_id")
+  email     String
+  role      WorkspaceRole @default(MEMBER)
+  status    InviteStatus  @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy   String
+  inviter     User      @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, email])
+  @@map("workspace_invite")
+}
+
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  GUEST
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}

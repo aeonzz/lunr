@@ -1,19 +1,13 @@
 import * as React from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import {
-  ChevronDown,
-  ChevronRight,
-  Cloud,
-  Download,
-  Share2,
-  Upload,
-} from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronDown, ChevronRight } from "lucide-react";
 
-import { userMenuMenuItems } from "@/config/nav";
 import { authClient } from "@/lib/auth-client";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuGroupLabel,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
@@ -22,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { Skeleton } from "./ui/skeleton";
 
@@ -91,13 +84,36 @@ export default function UserMenu() {
                 }
               />
               <DropdownMenuContent className="w-52">
-                <DropdownMenuItem>
-                  <span>Current Workspace</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <span>Create Workspace</span>
-                </DropdownMenuItem>
+                <DropdownMenuGroup>
+                  <DropdownMenuGroupLabel>
+                    {session?.user.email}
+                  </DropdownMenuGroupLabel>
+                  <DropdownMenuItem>
+                    <Avatar className="size-5 rounded-md">
+                      {session?.user?.image ? (
+                        <AvatarImage
+                          src={session.user.image}
+                          alt={session.user.name ?? ""}
+                        />
+                      ) : (
+                        <AvatarFallback className="rounded-md text-xs">
+                          {session?.user?.name?.slice(0, 2).toUpperCase() ??
+                            "??"}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                    <span className="truncate font-semibold">
+                      {session?.user.name}
+                    </span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <span>Create Workspace</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <span>Add an account...</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenuSeparator />

@@ -65,5 +65,29 @@ export type Account = Prisma.AccountModel
  * 
  */
 export type Verification = Prisma.VerificationModel
+/**
+ * Model Workspace
+ * 
+ */
+export type Workspace = Prisma.WorkspaceModel
+/**
+ * Model WorkspaceMember
+ * 
+ */
+export type WorkspaceMember = Prisma.WorkspaceMemberModel
+/**
+ * Model WorkspaceSettings
+ * 
+ */
+export type WorkspaceSettings = Prisma.WorkspaceSettingsModel
+/**
+ * Model WorkspaceInvite
+ * 
+ */
+export type WorkspaceInvite = Prisma.WorkspaceInviteModel
 
+export type WorkspaceRole = $Enums.WorkspaceRole
+export const WorkspaceRole = $Enums.WorkspaceRole
 
+export type InviteStatus = $Enums.InviteStatus
+export const InviteStatus = $Enums.InviteStatus
