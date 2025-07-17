@@ -11,6 +11,6 @@ export const appRouter = router({
       user: ctx.session.user,
     };
   }),
-  workspace: workspaceRouter,
 });
+
 export type AppRouter = typeof appRouter;

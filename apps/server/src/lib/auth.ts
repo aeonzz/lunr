@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "../../prisma";
-import { customSession } from "better-auth/plugins";
+import { customSession, organization } from "better-auth/plugins";
 
 async function getUserInfo(userId: string) {
   const user = await prisma.user.findUnique({
@@ -41,6 +41,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [
+    organization(),
     customSession(async ({ user, session }) => {
       const userInfo = await getUserInfo(session.userId);
       return {
