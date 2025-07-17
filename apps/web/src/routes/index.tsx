@@ -25,8 +25,8 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { data: session, isPending } = authClient.useSession();
-  
-  if (isPending || !session) return null
 
-  return <CreateWorkspaceForm userId={session.user.id} />;
+  if (isPending || !session) return null;
+
+  return <CreateWorkspaceForm />;
 }

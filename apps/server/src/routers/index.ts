@@ -1,5 +1,4 @@
 import { protectedProcedure, publicProcedure, router } from "../lib/trpc";
-import { workspaceRouter } from "./workspace";
 
 export const appRouter = router({
   healthCheck: publicProcedure.query(() => {

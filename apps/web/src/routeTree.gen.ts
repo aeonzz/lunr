@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
+import { Route as JoinImport } from './routes/join'
 import { Route as DashboardImport } from './routes/dashboard'
 import { Route as AiImport } from './routes/ai'
 import { Route as AppRouteImport } from './routes/_app/route'
@@ -24,6 +25,12 @@ import { Route as AppWorkspaceInboxImport } from './routes/_app/$workspace/inbox
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const JoinRoute = JoinImport.update({
+  id: '/join',
+  path: '/join',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -94,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardImport
       parentRoute: typeof rootRoute
     }
+    '/join': {
+      id: '/join'
+      path: '/join'
+      fullPath: '/join'
+      preLoaderRoute: typeof JoinImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -139,6 +153,7 @@ export interface FileRoutesByFullPath {
   '': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/$workspace/inbox': typeof AppWorkspaceInboxRoute
   '/$workspace/issues': typeof AppWorkspaceIssuesRoute
@@ -149,6 +164,7 @@ export interface FileRoutesByTo {
   '': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/$workspace/inbox': typeof AppWorkspaceInboxRoute
   '/$workspace/issues': typeof AppWorkspaceIssuesRoute
@@ -160,6 +176,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteRouteWithChildren
   '/ai': typeof AiRoute
   '/dashboard': typeof DashboardRoute
+  '/join': typeof JoinRoute
   '/login': typeof LoginRoute
   '/_app/$workspace/inbox': typeof AppWorkspaceInboxRoute
   '/_app/$workspace/issues': typeof AppWorkspaceIssuesRoute
@@ -172,6 +189,7 @@ export interface FileRouteTypes {
     | ''
     | '/ai'
     | '/dashboard'
+    | '/join'
     | '/login'
     | '/$workspace/inbox'
     | '/$workspace/issues'
@@ -181,6 +199,7 @@ export interface FileRouteTypes {
     | ''
     | '/ai'
     | '/dashboard'
+    | '/join'
     | '/login'
     | '/$workspace/inbox'
     | '/$workspace/issues'
@@ -190,6 +209,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/ai'
     | '/dashboard'
+    | '/join'
     | '/login'
     | '/_app/$workspace/inbox'
     | '/_app/$workspace/issues'
@@ -201,6 +221,7 @@ export interface RootRouteChildren {
   AppRouteRoute: typeof AppRouteRouteWithChildren
   AiRoute: typeof AiRoute
   DashboardRoute: typeof DashboardRoute
+  JoinRoute: typeof JoinRoute
   LoginRoute: typeof LoginRoute
 }
 
@@ -209,6 +230,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRouteRoute: AppRouteRouteWithChildren,
   AiRoute: AiRoute,
   DashboardRoute: DashboardRoute,
+  JoinRoute: JoinRoute,
   LoginRoute: LoginRoute,
 }
 
@@ -226,6 +248,7 @@ export const routeTree = rootRoute
         "/_app",
         "/ai",
         "/dashboard",
+        "/join",
         "/login"
       ]
     },
@@ -244,6 +267,9 @@ export const routeTree = rootRoute
     },
     "/dashboard": {
       "filePath": "dashboard.tsx"
+    },
+    "/join": {
+      "filePath": "join.tsx"
     },
     "/login": {
       "filePath": "login.tsx"

@@ -1,29 +1,19 @@
-import * as React from "react";
-import { trpc } from "@/utils/trpc";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import type { Organization } from "better-auth/plugins";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod/v4";
 
+import { authClient } from "@/lib/auth-client";
+
 import { Button } from "./ui/button";
-import { Card, CardContent, CardFooter } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-interface CreateWorkspaceFormProps {
-  userId: string;
-}
-
-export default function CreateWorkspaceForm({
-  userId,
-}: CreateWorkspaceFormProps) {
+export default function CreateWorkspaceForm() {
   const navigate = useNavigate();
-
-  const { mutateAsync, isError } = useMutation(
-    trpc.workspace.create.mutationOptions({})
-  );
 
   const form = useForm({
     defaultValues: {
@@ -31,23 +21,25 @@ export default function CreateWorkspaceForm({
       url: "",
     },
     onSubmit: async ({ value }) => {
-      await mutateAsync(
-        { ownerId: userId, name: value.name, slug: value.url },
-        {
-          onSuccess: ({ workspace }) => {
+      const { name, url } = value;
+      await authClient.organization.create({
+        name: name,
+        slug: url,
+        fetchOptions: {
+          onSuccess: ({ data }: { data: Organization }) => {
             navigate({
               to: "/$workspace/inbox",
               params: {
-                workspace: workspace.slug,
+                workspace: data.slug,
               },
             });
             form.reset();
           },
           onError: (error) => {
-            toast.error(error.message);
+            toast.error(error.error.message);
           },
-        }
-      );
+        },
+      });
     },
     validators: {
       onSubmit: z.object({

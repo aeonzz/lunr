@@ -1,5 +1,5 @@
-import * as React from "react";
-import { useNavigate } from "@tanstack/react-router";
+import React from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
@@ -11,13 +11,15 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSubMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
-import { Skeleton } from "./ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import { Skeleton } from "../ui/skeleton";
+import Workspaces from "./workspaces";
 
 export default function UserMenu() {
   const navigate = useNavigate();
@@ -71,8 +73,8 @@ export default function UserMenu() {
               <DropdownMenuShortcut>⌘?</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenu>
-              <DropdownMenuSubMenuTrigger
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger
                 render={
                   <DropdownMenuItem className="data-[popup-open]:[&>span>svg]:text-foreground">
                     Switch workspace
@@ -88,6 +90,7 @@ export default function UserMenu() {
                   <DropdownMenuGroupLabel>
                     {session?.user.email}
                   </DropdownMenuGroupLabel>
+                  <Workspaces />
                   <DropdownMenuItem>
                     <Avatar className="size-5 rounded-md">
                       {session?.user?.image ? (
@@ -107,15 +110,15 @@ export default function UserMenu() {
                     </span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <span>Create Workspace</span>
-                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    render={<Link to="/join">Create Workspace</Link>}
+                  />
                   <DropdownMenuItem>
                     <span>Add an account...</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenuSub>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               disabled={isLoading}
